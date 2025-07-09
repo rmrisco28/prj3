@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -8,6 +8,7 @@ import {
   FormControl,
   FormGroup,
   FormLabel,
+  Modal,
   Row,
   Spinner,
 } from "react-bootstrap";
@@ -16,6 +17,8 @@ export function BoardDetail() {
   // 다이나믹 새그먼트 받을수 있는 방법
   const [board, setBoard] = useState(null);
   const { id } = useParams();
+  const navigate = useNavigate();
+  const [modalShow, setModalShow] = useState(false);
 
   useEffect(() => {
     // axios로 해당 게시물 가져오기
@@ -34,6 +37,26 @@ export function BoardDetail() {
         console.log("항상");
       });
   }, []);
+
+  function handleDeleteButtonClick() {
+    axios
+      .delete(`/api/board/${id}`)
+      .then((res) => {
+        console.log("잘됨");
+        const message = res.data.message;
+        if (message) {
+          toast(message.text, { type: message.type });
+        }
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log("잘 안됨");
+        toast("게시물이 삭제되지 않았습니다.", { type: "warning" });
+      })
+      .finally(() => {
+        console.log("항상");
+      });
+  }
 
   if (!board) {
     return <Spinner />;
@@ -77,12 +100,36 @@ export function BoardDetail() {
           </FormGroup>
         </div>
         <div>
-          <Button className="me-2" variant="outline-danger">
+          <Button
+            onClick={() => setModalShow(true)}
+            className="me-2"
+            variant="outline-danger"
+          >
+            삭제
+          </Button>
+          <Button
+            variant="outline-info"
+            onClick={() => navigate(`/board/edit?id=${board.id}`)}
+          >
             수정
           </Button>
-          <Button variant="outline-info">삭제</Button>
         </div>
       </Col>
+
+      <Modal show={modalShow}>
+        <Modal.Header closeButton>
+          <Modal.Title>게시물 삭제 확인</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> {board.id} 번 게시물을 삭제하시겠습니까? </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-dark" onClick={() => setModalShow(false)}>
+            취소
+          </Button>
+          <Button variant="danger" onClick={handleDeleteButtonClick}>
+            삭제
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Row>
   );
 }
