@@ -18,6 +18,15 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @DeleteMapping(params = "email")
+    public ResponseEntity<?> deleteMember(@RequestParam String email) {
+        memberService.delete(email);
+        return ResponseEntity.ok().body(Map.of(
+                "message", Map.of(
+                        "type", "success",
+                        "text", "삭제되었습니다.")));
+    }
+
     @GetMapping(params = "email")
     public MemberDto getMember(String email) {
         return memberService.get(email);

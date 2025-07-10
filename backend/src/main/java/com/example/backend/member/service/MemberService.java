@@ -84,4 +84,8 @@ public class MemberService {
 
         return memberDto;
     }
+
+    public void delete(String email) {
+        memberRepository.deleteById(email);
+    }
 }

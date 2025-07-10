@@ -4,16 +4,20 @@ import {
   FormControl,
   FormGroup,
   FormLabel,
+  Modal,
   Row,
   Spinner,
 } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+import { toast } from "react-toastify";
 
 export function MemberDetail() {
   const [member, setMember] = useState(null);
+  const [modalShow, setModalShow] = useState(false);
   const [params] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios
@@ -32,6 +36,25 @@ export function MemberDetail() {
 
   if (!member) {
     return <Spinner />;
+  }
+
+  function handleDeleteButtonClick() {
+    axios
+      .delete(`/api/member?email=${member.email}`)
+      .then((res) => {
+        console.log("good");
+        const message = res.data.message;
+        if (message) {
+          toast(message.text, { type: message.type });
+        }
+        navigate("/");
+      })
+      .catch((err) => {
+        console.log("fail");
+      })
+      .finally(() => {
+        console.log("always");
+      });
   }
 
   return (
@@ -57,12 +80,37 @@ export function MemberDetail() {
           </FormGroup>
         </div>
         <div>
-          <Button variant="outline-danger" size="sm" className="me-2">
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="me-2"
+            onClick={() => setModalShow(true)}
+          >
             회원 탈퇴
           </Button>
-          <Button variant="outline-info">정보 수정</Button>
+          <Button
+            variant="outline-info"
+            onClick={() => navigate(`/member/edit?email=${member.email}`)}
+          >
+            정보 수정
+          </Button>
         </div>
       </Col>
+
+      <Modal show={modalShow}>
+        <Modal.Header closeButton>
+          <Modal.Title>회원 삭제 확인</Modal.Title>
+        </Modal.Header>
+        <Modal.Body> {member.email}의 정보를 삭제하시겠습니까? </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-dark" onClick={() => setModalShow(false)}>
+            취소
+          </Button>
+          <Button variant="danger" onClick={handleDeleteButtonClick}>
+            삭제
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Row>
   );
 }
