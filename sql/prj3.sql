@@ -22,5 +22,15 @@ CREATE TABLE member
 
 DROP TABLE member;
 
+# 자습 유저 테이블
+CREATE TABLE user
+(
+    id       VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name     VARCHAR(255) NOT NULL,
+    age      INT          NOT NULL,
+    info     VARCHAR(255) NULL,
+    CONSTRAINT pk_user PRIMARY KEY (id)
+);
 
 

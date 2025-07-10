@@ -8,6 +8,7 @@ import { MemberAdd } from "./feature/member/MemberAdd.jsx";
 import { MemberList } from "./feature/member/MemberList.jsx";
 import { MemberDetail } from "./feature/member/MemberDetail.jsx";
 import { MemberEdit } from "./feature/member/MemberEdit.jsx";
+import { UserAdd } from "./feature/user/UserAdd.jsx";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="member/list" element={<MemberList />} />
           <Route path="/member" element={<MemberDetail />} />
           <Route path="/member/edit" element={<MemberEdit />} />
+          <Route path="/useradd" element={<UserAdd />} />
         </Route>
       </Routes>
     </BrowserRouter>
