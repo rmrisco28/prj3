@@ -1,12 +1,13 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import { MainLayout } from "../Common/MainLayout.jsx";
-import { BoardList } from "./board/BoardList.jsx";
-import { BoardAdd } from "./board/BoardAdd.jsx";
-import { BoardDetail } from "./board/BoardDetail.jsx";
-import { BoardEdit } from "./board/BoardEdit.jsx";
-import { MemberAdd } from "./member/MemberAdd.jsx";
-import { MemberList } from "./member/MemberList.jsx";
-import { MemberDetail } from "./member/MemberDetail.jsx";
+import { MainLayout } from "./Common/MainLayout.jsx";
+import { BoardList } from "./feature/board/BoardList.jsx";
+import { BoardAdd } from "./feature/board/BoardAdd.jsx";
+import { BoardDetail } from "./feature/board/BoardDetail.jsx";
+import { BoardEdit } from "./feature/board/BoardEdit.jsx";
+import { MemberAdd } from "./feature/member/MemberAdd.jsx";
+import { MemberList } from "./feature/member/MemberList.jsx";
+import { MemberDetail } from "./feature/member/MemberDetail.jsx";
+import { MemberEdit } from "./feature/member/MemberEdit.jsx";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="signup" element={<MemberAdd />} />
           <Route path="member/list" element={<MemberList />} />
           <Route path="/member" element={<MemberDetail />} />
+          <Route path="/member/edit" element={<MemberEdit />} />
         </Route>
       </Routes>
     </BrowserRouter>

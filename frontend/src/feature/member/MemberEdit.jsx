@@ -8,15 +8,15 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
+import { useNavigate, useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate, useSearchParams } from "react-router";
 import { toast } from "react-toastify";
 
-export function MemberDetail() {
+export function MemberEdit() {
   const [member, setMember] = useState(null);
-  const [params] = useSearchParams();
   const [modalShow, setModalShow] = useState(false);
+  const [params] = useSearchParams();
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -24,6 +24,7 @@ export function MemberDetail() {
     axios
       .get(`/api/member?email=${params.get("email")}`)
       .then((res) => {
+        console.log("good");
         setMember(res.data);
       })
       .catch((err) => {
@@ -34,25 +35,26 @@ export function MemberDetail() {
       });
   }, []);
 
-  function handleDeleteButtonClick() {
+  function handleSaveButtonClick() {
     axios
-      .delete("/api/member", {
-        data: { email: member.email, password: password },
-      })
+      .put("/api/member", { ...member, password: password })
       .then((res) => {
         console.log("good");
         const message = res.data.message;
-        toast(message.text, { type: message.type });
-        navigate("/");
+        if (message) {
+          toast(message.text, { type: message.type });
+        }
+        navigate("/member/list");
       })
       .catch((err) => {
         console.log("bad");
         const message = err.response.data.message;
-        toast(message.text, { type: message.type });
+        if (message) {
+          toast(message.text, { type: message.type });
+        }
       })
       .finally(() => {
-        console.log("always");
-        setModalShow(false);
+        console.log("항상");
         setPassword("");
       });
   }
@@ -62,25 +64,34 @@ export function MemberDetail() {
   }
 
   return (
-    <Row>
-      <Col>
-        <h2 className="mb-4">회원 정보</h2>
+    <Row className="justify-content-center">
+      <Col xs={12} md={8} lg={6}>
+        <h2 className="mb-4">회원 정보 수정</h2>
         <div>
           <FormGroup controlId="email1" className="mb-3">
             <FormLabel>이메일</FormLabel>
-            <FormControl readOnly={true} value={member.email} />
+            <FormControl disabled value={member.email} />
           </FormGroup>
         </div>
         <div>
           <FormGroup controlId="nickName1" className="mb-3">
             <FormLabel>별명</FormLabel>
-            <FormControl readOnly={true} value={member.nickName} />
+            <FormControl
+              value={member.nickName}
+              onChange={(e) =>
+                setMember({ ...member, nickName: e.target.value })
+              }
+            />
           </FormGroup>
         </div>
         <div>
           <FormGroup controlId="info1" className="mb-3">
             <FormLabel>자기소개</FormLabel>
-            <FormControl as="textarea" readOnly={true} value={member.info} />
+            <FormControl
+              as="textarea"
+              value={member.info}
+              onChange={(e) => setMember({ ...member, info: e.target.value })}
+            />
           </FormGroup>
         </div>
         <div>
@@ -88,35 +99,30 @@ export function MemberDetail() {
             <FormLabel>가입일시</FormLabel>
             <FormControl
               type="datetime-local"
-              readOnly={true}
+              disabled
               value={member.insertedAt}
             />
           </FormGroup>
-        </div>
-        <div>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            className="me-2"
-            onClick={() => setModalShow(true)}
-          >
-            회원 탈퇴
-          </Button>
-          <Button
-            variant="outline-info"
-            onClick={() => {
-              navigate(`/member/edit?email=${member.email}`);
-            }}
-          >
-            정보 수정
-          </Button>
+
+          <div>
+            <Button
+              className="me-2"
+              variant="outline-secondary"
+              onClick={() => navigate(-1)}
+            >
+              취소
+            </Button>
+            <Button variant="primary" onClick={() => setModalShow(true)}>
+              저장
+            </Button>
+          </div>
         </div>
       </Col>
 
       {/*   삭제 확인 모달 */}
       <Modal show={modalShow} onHide={() => setModalShow(false)}>
         <Modal.Header closeButton>
-          <Modal.Title>회원 탈퇴 확인</Modal.Title>
+          <Modal.Title>회원 정보 수정 확인</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <FormGroup controlId="password1">
@@ -132,8 +138,8 @@ export function MemberDetail() {
           <Button variant="outline-dark" onClick={() => setModalShow(false)}>
             취소
           </Button>
-          <Button variant="danger" onClick={handleDeleteButtonClick}>
-            탈퇴
+          <Button variant="primary" onClick={handleSaveButtonClick}>
+            저장
           </Button>
         </Modal.Footer>
       </Modal>

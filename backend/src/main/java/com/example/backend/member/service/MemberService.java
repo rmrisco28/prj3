@@ -6,6 +6,7 @@ import com.example.backend.member.dto.MemberListInfo;
 import com.example.backend.member.entity.Member;
 import com.example.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +35,7 @@ public class MemberService {
     }
 
     private boolean validate(MemberForm memberForm) {
-        // 이미 있는 email인지
+        // 이미 있는 email 인지
         Optional<Member> byId = memberRepository.findById(memberForm.getEmail());
         if (byId.isPresent()) {
             throw new RuntimeException("이미 가입된 이메일입니다.");
@@ -52,7 +53,7 @@ public class MemberService {
         }
         // 형식에 잘 맞는지?
         String email = memberForm.getEmail();
-        if (!Pattern.matches("[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}", email)) {
+        if (!Pattern.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}", email)) {
             throw new RuntimeException("이메일 형식에 맞지 않습니다.");
         }
 
@@ -83,5 +84,32 @@ public class MemberService {
         memberDto.setInsertedAt(db.getInsertedAt());
 
         return memberDto;
+    }
+
+    public void delete(MemberForm memberForm) {
+        Member db = memberRepository.findById(memberForm.getEmail()).get();
+        if (db.getPassword().equals(memberForm.getPassword())) {
+            memberRepository.deleteById(memberForm.getEmail());
+        } else {
+            throw new RuntimeException("암호가 일치하지 않습니다.");
+        }
+
+    }
+
+    public void update(MemberForm memberForm) {
+        // 조회(db)
+        Member db = memberRepository.findById(memberForm.getEmail()).get();
+        // 암호 확인
+        if (!db.getPassword().equals(memberForm.getPassword())) {
+            throw new RuntimeException("암호가 일치하지 않습니다.");
+        }
+
+        //변경
+        db.setNickName(memberForm.getNickName());
+        db.setInfo(memberForm.getInfo());
+
+        // 저장
+        memberRepository.save(db);
+
     }
 }
