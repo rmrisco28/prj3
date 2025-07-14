@@ -104,7 +104,7 @@ export function BoardDetail() {
           </FormGroup>
         </div>
         {hasAccess(board.authorEmail) && (
-          <div>
+          <div className="mb-5">
             <Button
               onClick={() => setModalShow(true)}
               className="me-2"
