@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import {
@@ -12,6 +12,8 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
+import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
+import { CommentContainer } from "../comment/CommentContainer.jsx";
 
 export function BoardDetail() {
   // 다이나믹 새그먼트 받을수 있는 방법
@@ -19,6 +21,8 @@ export function BoardDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [modalShow, setModalShow] = useState(false);
+
+  const { hasAccess } = useContext(AuthenticationContext);
 
   useEffect(() => {
     // axios로 해당 게시물 가져오기
@@ -86,7 +90,7 @@ export function BoardDetail() {
         <div>
           <FormGroup className="mb-3" controlId="author1">
             <FormLabel>작성자</FormLabel>
-            <FormControl readOnly={true} value={board.author} />
+            <FormControl readOnly={true} value={board.authorNickName} />
           </FormGroup>
         </div>
         <div>
@@ -99,21 +103,26 @@ export function BoardDetail() {
             />
           </FormGroup>
         </div>
-        <div>
-          <Button
-            onClick={() => setModalShow(true)}
-            className="me-2"
-            variant="outline-danger"
-          >
-            삭제
-          </Button>
-          <Button
-            variant="outline-info"
-            onClick={() => navigate(`/board/edit?id=${board.id}`)}
-          >
-            수정
-          </Button>
-        </div>
+        {hasAccess(board.authorEmail) && (
+          <div>
+            <Button
+              onClick={() => setModalShow(true)}
+              className="me-2"
+              variant="outline-danger"
+            >
+              삭제
+            </Button>
+            <Button
+              variant="outline-info"
+              onClick={() => navigate(`/board/edit?id=${board.id}`)}
+            >
+              수정
+            </Button>
+          </div>
+        )}
+
+        {/* 댓글 컴포넌트 */}
+        <CommentContainer boardId={board.id} />
       </Col>
 
       <Modal show={modalShow}>

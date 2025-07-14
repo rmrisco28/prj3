@@ -1,9 +1,13 @@
 package com.example.backend.member.service;
 
+import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.member.dto.*;
+import com.example.backend.member.entity.Auth;
 import com.example.backend.member.entity.Member;
+import com.example.backend.member.repository.AuthRepository;
 import com.example.backend.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -14,6 +18,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -22,6 +27,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final JwtEncoder jwtEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
+    private final AuthRepository authRepository;
+    private final BoardRepository boardRepository;
 
     public void add(MemberForm memberForm) {
 
@@ -30,7 +38,7 @@ public class MemberService {
             Member member = new Member();
             member.setEmail(memberForm.getEmail());
             member.setNickName(memberForm.getNickName());
-            member.setPassword(memberForm.getPassword());
+            member.setPassword(passwordEncoder.encode(memberForm.getPassword()));
             member.setInfo(memberForm.getInfo());
 
             memberRepository.save(member);
@@ -91,19 +99,21 @@ public class MemberService {
 
     public void delete(MemberForm memberForm) {
         Member db = memberRepository.findById(memberForm.getEmail()).get();
-        if (db.getPassword().equals(memberForm.getPassword())) {
+//        if (db.getPassword().equals(memberForm.getPassword())) {
+        if (passwordEncoder.matches(memberForm.getPassword(), db.getPassword())) {
+            boardRepository.deleteByAuthor(db);
             memberRepository.deleteById(memberForm.getEmail());
         } else {
             throw new RuntimeException("암호가 일치하지 않습니다.");
         }
-
     }
 
     public void update(MemberForm memberForm) {
         // 조회(db)
         Member db = memberRepository.findById(memberForm.getEmail()).get();
         // 암호 확인
-        if (!db.getPassword().equals(memberForm.getPassword())) {
+//        if (!db.getPassword().equals(memberForm.getPassword())) {
+        if (!passwordEncoder.matches(memberForm.getPassword(), db.getPassword())) {
             throw new RuntimeException("암호가 일치하지 않습니다.");
         }
 
@@ -119,8 +129,11 @@ public class MemberService {
     public void changePassword(ChangePasswordForm data) {
         // db 에서 데이터 얻어오기
         Member db = memberRepository.findById(data.getEmail()).get();
-        if (db.getPassword().equals(data.getOldPassword())) {
-            db.setPassword(data.getNewPassword());
+//        if (db.getPassword().equals(data.getOldPassword())) {
+        if (passwordEncoder.matches(data.getOldPassword(), db.getPassword())) {
+//            db.setPassword(data.getNewPassword());
+            db.setPassword(passwordEncoder.encode(data.getNewPassword()));
+
             memberRepository.save(db);
         } else {
             throw new RuntimeException("이전 패스워드가 일치하지 않습니다.");
@@ -132,14 +145,20 @@ public class MemberService {
         Optional<Member> db = memberRepository.findById(loginForm.getEmail());
         if (db.isPresent()) {
             // 있으면 password 맞는지
-            if (db.get().getPassword().equals(loginForm.getPassword())) {
+//            if (db.get().getPassword().equals(loginForm.getPassword())) {
+            if (passwordEncoder.matches(loginForm.getPassword(), db.get().getPassword())) {
+                List<Auth> authList = authRepository.findByMember(db.get());
+                // 고전적인 방법
+                // 만약에 여러 관리 모드를 여러개 갖고 있을 수 있도록.
+//                String authListString ="";
+//                for (Auth auth : authList) {
+//                    authListString = authListString + " " + auth.getId().getAuthName();
+//                }
+//                authListString = authListString.trim();
+                String authListString = authList.stream().map(auth -> auth.getId().getAuthName()).collect(Collectors.joining(" )"));
                 // 맞다면 token 만들어서 리턴
-                JwtClaimsSet claims = JwtClaimsSet.builder()
-                        .subject(loginForm.getEmail())
-                        .issuer("self")
-                        .issuedAt(Instant.now())
-                        .expiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 365))
-                        .build();
+                JwtClaimsSet claims = JwtClaimsSet.builder().subject(loginForm.getEmail()).issuer("self").issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(60 * 60 * 24 * 365)).claim("scp", authListString).build();
+
 
                 return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
             }

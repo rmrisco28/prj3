@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,11 +11,12 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
+import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
 
 export function BoardAdd() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [author, setAuthor] = useState("");
+  const { user } = useContext(AuthenticationContext);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const navigate = useNavigate();
@@ -28,7 +29,6 @@ export function BoardAdd() {
       .post("/api/board/add", {
         title: title,
         content: content,
-        author: author,
       })
       .then((res) => {
         // 컨트롤러에서 return 받은 데이터 넣기
@@ -63,9 +63,6 @@ export function BoardAdd() {
   if (content.trim() === "") {
     validate = false;
   }
-  if (author.trim() === "") {
-    validate = false;
-  }
 
   return (
     // 가운데 정렬
@@ -95,10 +92,7 @@ export function BoardAdd() {
         <div>
           <FormGroup className="mb-3" controlId="author1">
             <FormLabel>작성자</FormLabel>
-            <FormControl
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-            />
+            <FormControl value={user.email} disabled />
           </FormGroup>
         </div>
         <div className="mb-3">

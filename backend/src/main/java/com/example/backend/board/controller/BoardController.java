@@ -1,10 +1,13 @@
 package com.example.backend.board.controller;
 
 import com.example.backend.board.dto.BoardDto;
+import com.example.backend.board.dto.BoardListDto;
 import com.example.backend.board.dto.BoardListInfo;
 import com.example.backend.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,11 +25,13 @@ public class BoardController {
     private final BoardService boardService;
 
     @PutMapping("{id}")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> updateBoard(@PathVariable Integer id,
-                                         @RequestBody BoardDto boardDto) {
+                                         @RequestBody BoardDto boardDto,
+                                         Authentication authentication) {
         boolean result = boardService.validate(boardDto);
         if (result) {
-            boardService.update(boardDto);
+            boardService.update(boardDto, authentication);
 
             return ResponseEntity.ok().body(Map.of(
                     "message", Map.of(
@@ -42,9 +47,10 @@ public class BoardController {
 
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteBoard(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteBoard(@PathVariable Integer id,
+                                         Authentication authentication) {
         // 값들이 유효한지 확인
-        boardService.deleteById(id);
+        boardService.deleteById(id, authentication);
         return ResponseEntity.ok().body(Map.of(
                 "message", Map.of(
                         "type", "success",
@@ -58,14 +64,17 @@ public class BoardController {
 
 
     @GetMapping("list")
-    public List<BoardListInfo> getAllBoards() {
-
-        return boardService.list();
+    public Map<String, Object> getAllBoards(
+            @RequestParam(value = "q", defaultValue = "") String keyword,
+            @RequestParam(value = "p", defaultValue = "1") Integer pageNumber) {
+        return boardService.list(keyword, pageNumber);
     }
 
 
     @PostMapping("add")
-    public ResponseEntity<?> add(@RequestBody BoardDto dto) throws InterruptedException {
+    @PreAuthorize("isAuthenticated()")// 유효한 값을 가져온 경우에만
+    public ResponseEntity<?> add(@RequestBody BoardDto dto,
+                                 Authentication authentication) throws InterruptedException {
 
         // 넘겨진 값들이 유효한지 확인해서 유효하면 아래 일을 하고,
         // 아니라면 패스하기
@@ -73,7 +82,7 @@ public class BoardController {
 
         if (result) {
             // service 에게 넘겨서 일 시키기
-            boardService.add(dto);
+            boardService.add(dto, authentication);
             //
             // body 에는 메시지 전송
             return ResponseEntity.ok().body(Map.of(

@@ -117,7 +117,6 @@ public class MemberController {
     @GetMapping(params = "email")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> getMember(String email, Authentication authentication) {
-        //todo
         if (authentication.getName().equals(email)) {
             return ResponseEntity.ok().body(memberService.get(email));
         } else {
@@ -126,6 +125,7 @@ public class MemberController {
     }
 
     @GetMapping("list")
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
     public List<MemberListInfo> list() {
         return memberService.list();
     }

@@ -1,31 +1,34 @@
-package com.example.backend.board.entity;
+package com.example.backend.comment.entity;
 
+import com.example.backend.board.entity.Board;
 import com.example.backend.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
+@Table(name = "comment")
+@Entity
 @Getter
 @Setter
-@Entity
-@Table(name = "board")
-public class Board {
-
+@ToString
+public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String title;
-    private String content;
+    @ManyToOne
+    @JoinColumn(name = "board_id")
+    private Board board;
+
     @ManyToOne
     @JoinColumn(name = "author")
     private Member author;
 
-    // 자동으로 업데이트 해주는 메소드,
-    // default now()로 값이 추가될 예정
+    private String comment;
+
     @Column(updatable = false, insertable = false)
     private LocalDateTime insertedAt;
-
 }
