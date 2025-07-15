@@ -59,7 +59,7 @@ export function BoardEdit() {
       })
       .finally(() => {
         console.log("finally");
-      });
+      }, []);
   }
 
   // 널일 때는 스피너로 돌리기.

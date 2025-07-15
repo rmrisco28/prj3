@@ -50,7 +50,7 @@ export function MemberAdd() {
       .finally(() => {
         console.log("항상");
         setIsProcessing(false);
-      });
+      }, []);
   }
 
   // 이메일, 암호, 별명 미 입력시, 가입버튼 비활성화
