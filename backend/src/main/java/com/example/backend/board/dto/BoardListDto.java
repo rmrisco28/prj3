@@ -14,12 +14,11 @@ import java.time.ZoneId;
 @NoArgsConstructor
 // 생성자가 2개인 상황
 public class BoardListDto {
-    //  게시물 목록 볼때 필요한 값들
     private Integer id;
     private String title;
     private String nickName;
     private LocalDateTime insertedAt;
-
+    private Long countComment;
 
     public String getTimesAgo() {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));

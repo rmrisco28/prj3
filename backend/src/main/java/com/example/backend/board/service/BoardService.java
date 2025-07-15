@@ -97,6 +97,9 @@ public class BoardService {
     }
 
     public void update(BoardDto boardDto, Authentication authentication) {
+        if (authentication == null) {
+            throw new RuntimeException("권한이 없습니다.");
+        }
 
         // 조회는 조심히, 조회 후 수정 해야함.
         Board db = boardRepository.findById(boardDto.getId()).get();
