@@ -54,7 +54,8 @@ public class BoardService {
 
     public Map<String, Object> list(String keyword, Integer pageNumber) {
 //        return boardRepository.findAllByOrderByIdDesc();
-        Page<BoardListDto> boardListDtoPage = boardRepository.findAllBy(keyword, PageRequest.of(pageNumber - 1, 10));
+        Page<BoardListDto> boardListDtoPage =
+                boardRepository.findAllBy(keyword, PageRequest.of(pageNumber - 1, 10));
 
         int totalPages = boardListDtoPage.getTotalPages(); // 마지막 페이지
         int rightPageNumber = ((pageNumber - 1) / 10 + 1) * 10;
