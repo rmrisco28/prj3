@@ -70,7 +70,6 @@ export function BoardDetail() {
   return (
     <Row className="justify-content-center">
       <Col xs={12} md={8} lg={6}>
-        {/*todo*/}
         <div className="d-flex justify-content-between">
           <h2 className="mb-4">{board.id}번 게시물</h2>
           <LikeContainer boardId={board.id} />
