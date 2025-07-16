@@ -8,9 +8,11 @@ import {
   FormControl,
   FormGroup,
   FormLabel,
+  ListGroup,
   Modal,
   Row,
   Spinner,
+  Image,
 } from "react-bootstrap";
 import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
 import { CommentContainer } from "../comment/CommentContainer.jsx";
@@ -90,6 +92,16 @@ export function BoardDetail() {
               value={board.content}
             />
           </FormGroup>
+        </div>
+        <div className="mb-3">
+          {/*   파일 목록 보기   */}
+          <ListGroup>
+            {board.files.map((file) => (
+              <ListGroup.Item key={file.name}>
+                <Image src={file.path} />
+              </ListGroup.Item>
+            ))}
+          </ListGroup>
         </div>
         <div>
           <FormGroup className="mb-3" controlId="author1">

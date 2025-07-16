@@ -16,9 +16,10 @@ import { AuthenticationContext } from "../../Common/AuthenticationContextProvide
 export function BoardAdd() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const { user } = useContext(AuthenticationContext);
+  const [files, setFiles] = useState([]);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const { user } = useContext(AuthenticationContext);
   const navigate = useNavigate();
 
   function handleSaveButtonClick() {
@@ -26,9 +27,11 @@ export function BoardAdd() {
     setIsProcessing(true);
 
     axios
-      .post("/api/board/add", {
+      .postForm("/api/board/add", {
         title: title,
         content: content,
+        files: files,
+        // JSON 에는 post 형식이 없기 대문에 multipart form-data로 보내야 한다.
       })
       .then((res) => {
         // 컨트롤러에서 return 받은 데이터 넣기
@@ -89,6 +92,19 @@ export function BoardAdd() {
             />
           </FormGroup>
         </div>
+
+        <div>
+          <FormGroup className="mb-3" controlId="files1">
+            <FormLabel>이미지 파일</FormLabel>
+            <FormControl
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={(e) => setFiles(e.target.files)}
+            />
+          </FormGroup>
+        </div>
+
         <div>
           <FormGroup className="mb-3" controlId="author1">
             <FormLabel>작성자</FormLabel>

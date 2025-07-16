@@ -1,5 +1,6 @@
 package com.example.backend.board.controller;
 
+import com.example.backend.board.dto.BoardAddForm;
 import com.example.backend.board.dto.BoardDto;
 import com.example.backend.board.dto.BoardListDto;
 import com.example.backend.board.dto.BoardListInfo;
@@ -73,12 +74,12 @@ public class BoardController {
 
     @PostMapping("add")
     @PreAuthorize("isAuthenticated()")// 유효한 값을 가져온 경우에만
-    public ResponseEntity<?> add(@RequestBody BoardDto dto,
+    public ResponseEntity<?> add(BoardAddForm dto,
                                  Authentication authentication) throws InterruptedException {
 
         // 넘겨진 값들이 유효한지 확인해서 유효하면 아래 일을 하고,
         // 아니라면 패스하기
-        boolean result = boardService.validate(dto);
+        boolean result = boardService.validateFormAdd(dto);
 
         if (result) {
             // service 에게 넘겨서 일 시키기
