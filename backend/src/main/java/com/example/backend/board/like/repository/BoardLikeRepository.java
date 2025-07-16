@@ -1,0 +1,14 @@
+package com.example.backend.board.like.repository;
+
+import com.example.backend.board.like.entity.BoardLike;
+import com.example.backend.board.like.entity.BoardLikeId;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import javax.swing.text.html.Option;
+import java.util.Objects;
+import java.util.Optional;
+
+public interface BoardLikeRepository extends JpaRepository<BoardLike, BoardLikeId> {
+    Optional<BoardLike> findByBoardIdAndMemberEmail(Integer boardId, String name);
+
+}
