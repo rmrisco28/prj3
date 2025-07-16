@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Badge, Col, Pagination, Row, Spinner, Table } from "react-bootstrap";
 import { useNavigate, useSearchParams } from "react-router";
-import { FaRegComments } from "react-icons/fa";
+import { FaRegComments, FaRegImages } from "react-icons/fa";
 import { GoHeartFill } from "react-icons/go";
 
 export function BoardList() {
@@ -90,12 +90,25 @@ export function BoardList() {
                     <td>
                       <div className="d-flex gap-2">
                         <span>{board.title}</span>
+                        {/* 댓글 개수 */}
                         <span>
                           {board.countComment > 0 && (
                             <Badge bg="light" text="dark">
                               <div>
                                 <FaRegComments />
                                 <span>{board.countComment}</span>
+                              </div>
+                            </Badge>
+                          )}
+                        </span>
+
+                        {/* 파일 개수*/}
+                        <span>
+                          {board.countFile > 0 && (
+                            <Badge bg="info">
+                              <div className="d-flex gap-1">
+                                <FaRegImages />
+                                <span>{board.countFile}</span>
                               </div>
                             </Badge>
                           )}
