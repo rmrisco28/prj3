@@ -73,7 +73,7 @@ export function BoardDetail() {
         {/*todo*/}
         <div className="d-flex justify-content-between">
           <h2 className="mb-4">{board.id}번 게시물</h2>
-          <LikeContainer />
+          <LikeContainer boardId={board.id} />
         </div>
         <div>
           <FormGroup className="mb-3" controlId="title1">

@@ -1,6 +1,7 @@
 package com.example.backend.board.like.service;
 
 import com.example.backend.board.entity.Board;
+import com.example.backend.board.like.dto.BoardLikeDto;
 import com.example.backend.board.like.dto.LikeForm;
 import com.example.backend.board.like.entity.BoardLike;
 import com.example.backend.board.like.entity.BoardLikeId;
@@ -30,6 +31,7 @@ public class LikeService {
         // 게시물 번호와 로그인 이메일로 like 데이터 얻어서
         var boardLike = boardLikeRepository
                 .findByBoardIdAndMemberEmail(likeForm.getBoardId(), authentication.getName());
+
         // 있으면, 지우고,
         if (boardLike.isPresent()) {
             boardLikeRepository.delete(boardLike.get());
@@ -49,5 +51,20 @@ public class LikeService {
             boardLikeEntity.setId(boardLikeId);
             boardLikeRepository.save(boardLikeEntity);
         }
+    }
+
+    public BoardLikeDto get(Integer boardId, Authentication authentication) {
+        Long count = boardLikeRepository.countByBoardId(boardId);
+        Boolean liked = false;
+        if (authentication != null) {
+            var row = boardLikeRepository
+                    .findByBoardIdAndMemberEmail(boardId, authentication.getName());
+            liked = row.isPresent();
+        }
+        BoardLikeDto boardLikeDto = new BoardLikeDto();
+        boardLikeDto.setCount(count);
+        boardLikeDto.setLiked(liked);
+
+        return boardLikeDto;
     }
 }
