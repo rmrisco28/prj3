@@ -1,14 +1,12 @@
 package com.example.backend.board.service;
 
-import com.example.backend.board.dto.BoardFileDto;
+import com.example.backend.board.dto.*;
+import com.example.backend.board.like.repository.BoardLikeRepository;
 import com.example.backend.board.repository.BoardFileRepository;
-import com.example.backend.board.dto.BoardAddForm;
-import com.example.backend.board.dto.BoardListDto;
 import com.example.backend.board.entity.Board;
 import com.example.backend.board.entity.BoardFile;
 import com.example.backend.board.entity.BoardFileId;
 import com.example.backend.board.repository.BoardRepository;
-import com.example.backend.board.dto.BoardDto;
 import com.example.backend.comment.repository.CommentRepository;
 import com.example.backend.member.entity.Member;
 import com.example.backend.member.repository.MemberRepository;
@@ -37,6 +35,7 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final CommentRepository commentRepository;
     private final BoardFileRepository boardFileRepository;
+    private final BoardLikeRepository boardLikeRepository;
 
     public void add(BoardAddForm dto, Authentication authentication) {
         if (authentication == null) {
@@ -52,16 +51,16 @@ public class BoardService {
         board.setAuthor(author);
 
         // repository에 save 실행
+
         boardRepository.save(board);
 
         // file 저장하기
-        saveFiles(dto, board);
+        saveFiles(board, dto.getFiles());
 
     }
 
     //저장 할 때 게시물 번호를 알기 때문에 board 도 함께 파라미터로 받는다.
-    private void saveFiles(BoardAddForm dto, Board board) {
-        List<MultipartFile> files = dto.getFiles();
+    private void saveFiles(Board board, List<MultipartFile> files) {
         if (files != null && files.size() > 0) {
             for (MultipartFile file : files) {
                 if (file != null && file.getSize() > 0) {
@@ -147,7 +146,6 @@ public class BoardService {
         List<BoardFile> fileList = boardFileRepository.findByBoardId(id);
         List<BoardFileDto> files = new ArrayList<>();
         for (BoardFile boardFile : fileList) {
-            // todo
             BoardFileDto fileDto = new BoardFileDto();
             fileDto.setName(boardFile.getId().getName());
             fileDto.setPath("http://localhost:8081/boardFile/" + id + "/" + boardFile.getId().getName());
@@ -171,6 +169,12 @@ public class BoardService {
         }
         Board db = boardRepository.findById(id).get();
         if (db.getAuthor().getEmail().equals(authentication.getName())) {
+            // 좋아요
+            boardLikeRepository.deleteByBoard(db);
+            // 파일
+            boardFileRepository.deleteByBoard(db);
+            // 댓글
+
             commentRepository.deleteByBoardId(id);
             boardRepository.deleteById(id);
         } else {
@@ -179,23 +183,50 @@ public class BoardService {
 
     }
 
-    public void update(BoardDto boardDto, Authentication authentication) {
+    public void update(BoardUpdateForm boardDto, Authentication authentication) {
         if (authentication == null) {
             throw new RuntimeException("권한이 없습니다.");
         }
 
         // 조회는 조심히, 조회 후 수정 해야함.
         Board db = boardRepository.findById(boardDto.getId()).get();
+
         if (db.getAuthor().getEmail().equals(authentication.getName())) {
 
             // 변경
             db.setTitle(boardDto.getTitle());
             db.setContent(boardDto.getContent());
-//            db.setAuthor(boardDto.getAuthor());
+
+            // 파일 지우기
+            deleteFiles(db, boardDto.getDeleteFiles());
+            // 파일 추가
+            saveFiles(db, boardDto.getFiles());
+
+
             // 저장
             boardRepository.save(db);
         } else {
             throw new RuntimeException("권한이없습니다.");
+        }
+    }
+
+    private void deleteFiles(Board db, String[] deleteFiles) {
+        if (deleteFiles != null && deleteFiles.length > 0) {
+            for (String file : deleteFiles) {
+                // board_file table의 record 지우고
+                BoardFileId boardFileId = new BoardFileId();
+                boardFileId.setBoardId(db.getId());
+                boardFileId.setName(file);
+                boardFileRepository.deleteById(boardFileId);
+
+                // C:/Temp/prj3/boardFile/2324/tiger.jpg 지우고
+                File targetFile
+                        = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + file);
+                if (targetFile.exists()) {
+                    targetFile.delete();
+                }
+
+            }
         }
     }
 
@@ -211,4 +242,15 @@ public class BoardService {
         return true;
     }
 
+    public boolean validateForUpdata(BoardUpdateForm boardDto) {
+        // 제목 있는지
+        if (boardDto.getTitle() == null || boardDto.getTitle().trim().isBlank()) {
+            return false;
+        }
+        // 본문 있는지 검사
+        if (boardDto.getContent() == null || boardDto.getContent().trim().isBlank()) {
+            return false;
+        }
+        return true;
+    }
 }

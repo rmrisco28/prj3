@@ -8,6 +8,8 @@ import {
   FormControl,
   FormGroup,
   FormLabel,
+  Image,
+  ListGroup,
   Row,
   Spinner,
 } from "react-bootstrap";
@@ -92,7 +94,6 @@ export function BoardAdd() {
             />
           </FormGroup>
         </div>
-
         <div>
           <FormGroup className="mb-3" controlId="files1">
             <FormLabel>이미지 파일</FormLabel>

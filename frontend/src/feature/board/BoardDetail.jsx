@@ -13,6 +13,7 @@ import {
   Row,
   Spinner,
   Image,
+  ListGroupItem,
 } from "react-bootstrap";
 import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
 import { CommentContainer } from "../comment/CommentContainer.jsx";
@@ -97,9 +98,9 @@ export function BoardDetail() {
           {/*   파일 목록 보기   */}
           <ListGroup>
             {board.files.map((file) => (
-              <ListGroup.Item key={file.name}>
-                <Image src={file.path} />
-              </ListGroup.Item>
+              <ListGroupItem key={file.name}>
+                <Image fluid src={file.path} />
+              </ListGroupItem>
             ))}
           </ListGroup>
         </div>
