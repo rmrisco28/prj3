@@ -1,11 +1,11 @@
-package com.example.backend.board.like.service;
+package com.example.backend.like.service;
 
 import com.example.backend.board.entity.Board;
-import com.example.backend.board.like.dto.BoardLikeDto;
-import com.example.backend.board.like.dto.LikeForm;
-import com.example.backend.board.like.entity.BoardLike;
-import com.example.backend.board.like.entity.BoardLikeId;
-import com.example.backend.board.like.repository.BoardLikeRepository;
+import com.example.backend.like.dto.BoardLikeDto;
+import com.example.backend.like.dto.LikeForm;
+import com.example.backend.like.entity.BoardLike;
+import com.example.backend.like.entity.BoardLikeId;
+import com.example.backend.like.repository.BoardLikeRepository;
 import com.example.backend.board.repository.BoardRepository;
 import com.example.backend.member.entity.Member;
 import com.example.backend.member.repository.MemberRepository;

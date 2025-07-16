@@ -1,7 +1,7 @@
 package com.example.backend.board.service;
 
 import com.example.backend.board.dto.*;
-import com.example.backend.board.like.repository.BoardLikeRepository;
+import com.example.backend.like.repository.BoardLikeRepository;
 import com.example.backend.board.repository.BoardFileRepository;
 import com.example.backend.board.entity.Board;
 import com.example.backend.board.entity.BoardFile;

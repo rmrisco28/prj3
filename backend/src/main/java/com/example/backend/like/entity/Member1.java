@@ -1,4 +1,4 @@
-package com.example.backend.board.like.entity;
+package com.example.backend.like.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.example.backend.board.like.entity;
+package com.example.backend.like.entity;
 
 import com.example.backend.board.entity.Board;
 import com.example.backend.member.entity.Member;

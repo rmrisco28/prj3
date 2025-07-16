@@ -135,7 +135,7 @@ export function MemberEdit() {
           </Button>
         </div>
         <div>
-          <FormGroup controlId="nickName1" className="mb-3">
+          <FormGroup contr olId="nickName1" className="mb-3">
             <FormLabel>별명</FormLabel>
             <FormControl
               value={member.nickName}

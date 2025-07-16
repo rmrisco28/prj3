@@ -16,10 +16,12 @@ import { AuthenticationContext } from "../../Common/AuthenticationContextProvide
 
 export function MemberDetail() {
   const [member, setMember] = useState(null);
-  const [params] = useSearchParams();
   const [modalShow, setModalShow] = useState(false);
   const [password, setPassword] = useState("");
+
   const { logout, hasAccess } = useContext(AuthenticationContext);
+
+  const [params] = useSearchParams();
 
   const navigate = useNavigate();
 
@@ -66,25 +68,25 @@ export function MemberDetail() {
   }
 
   return (
-    <Row>
-      <Col>
+    <Row className="justify-content-center">
+      <Col xs={12} md={8} lg={6} className="mb-5">
         <h2 className="mb-4">회원 정보</h2>
         <div>
           <FormGroup controlId="email1" className="mb-3">
             <FormLabel>이메일</FormLabel>
-            <FormControl readOnly={true} value={member.email} />
+            <FormControl readOnly value={member.email} />
           </FormGroup>
         </div>
         <div>
           <FormGroup controlId="nickName1" className="mb-3">
             <FormLabel>별명</FormLabel>
-            <FormControl readOnly={true} value={member.nickName} />
+            <FormControl readOnly value={member.nickName} />
           </FormGroup>
         </div>
         <div>
           <FormGroup controlId="info1" className="mb-3">
             <FormLabel>자기소개</FormLabel>
-            <FormControl as="textarea" readOnly={true} value={member.info} />
+            <FormControl as="textarea" readOnly value={member.info} />
           </FormGroup>
         </div>
         <div>

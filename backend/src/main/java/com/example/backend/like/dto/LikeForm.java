@@ -1,4 +1,4 @@
-package com.example.backend.board.like.dto;
+package com.example.backend.like.dto;
 
 import lombok.Data;
 
