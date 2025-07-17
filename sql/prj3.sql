@@ -1,3 +1,4 @@
+# 게시판 테이블
 CREATE TABLE board
 (
     id          INT AUTO_INCREMENT NOT NULL,
@@ -36,7 +37,7 @@ CREATE TABLE auth
 );
 INSERT INTO auth
     (member_email, auth_name)
-VALUES ('trump@abc.com', 'admin');
+VALUES ('admin@z.com', 'admin');
 
 SELECT *
 FROM auth;
