@@ -175,6 +175,7 @@ public class BoardService {
             BoardFileDto fileDto = new BoardFileDto();
             fileDto.setName(boardFile.getId().getName());
             fileDto.setPath(imagePrefix + "prj3/board/" + id + "/" + boardFile.getId().getName());
+
             files.add(fileDto);
         }
 
