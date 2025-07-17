@@ -87,8 +87,7 @@ public class BoardService {
                     try {
 
                         BufferedInputStream bi = new BufferedInputStream(file.getInputStream());
-                        BufferedOutputStream bo
-                                = new BufferedOutputStream(new FileOutputStream(new File(folder, file.getOriginalFilename())));
+                        BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(new File(folder, file.getOriginalFilename())));
 
                         try (bi; bo) {
 
@@ -123,8 +122,7 @@ public class BoardService {
 
     public Map<String, Object> list(String keyword, Integer pageNumber) {
 //        return boardRepository.findAllByOrderByIdDesc();
-        Page<BoardListDto> boardListDtoPage =
-                boardRepository.findAllBy(keyword, PageRequest.of(pageNumber - 1, 10));
+        Page<BoardListDto> boardListDtoPage = boardRepository.findAllBy(keyword, PageRequest.of(pageNumber - 1, 10));
 
         int totalPages = boardListDtoPage.getTotalPages(); // 마지막 페이지
         int rightPageNumber = ((pageNumber - 1) / 10 + 1) * 10;
@@ -132,10 +130,7 @@ public class BoardService {
         rightPageNumber = Math.min(rightPageNumber, totalPages);
         leftPageNumber = Math.max(leftPageNumber, 1);
 
-        var pageInfo = Map.of("totalPages", totalPages,
-                "rightPageNumber", rightPageNumber,
-                "leftPageNumber", leftPageNumber,
-                "currentPageNumber", pageNumber);
+        var pageInfo = Map.of("totalPages", totalPages, "rightPageNumber", rightPageNumber, "leftPageNumber", leftPageNumber, "currentPageNumber", pageNumber);
 
         return Map.of("pageInfo", pageInfo, "boardList", boardListDtoPage.getContent());
     }
@@ -168,9 +163,22 @@ public class BoardService {
             throw new RuntimeException("권한이 없습니다.");
         }
         Board db = boardRepository.findById(id).get();
+
         if (db.getAuthor().getEmail().equals(authentication.getName())) {
             // 좋아요
             boardLikeRepository.deleteByBoard(db);
+            // 디스크의 파일
+            /// 1.파일 목록 얻고
+            List<String> fileNames = boardFileRepository.listFileNameByBoard(db);
+            /// 2.파일 지우기
+            for (String fileName : fileNames) {
+                File f = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + fileName);
+                if (f.exists()) {
+                    f.delete();
+                }
+            }
+
+
             // 파일
             boardFileRepository.deleteByBoard(db);
             // 댓글
@@ -220,8 +228,7 @@ public class BoardService {
                 boardFileRepository.deleteById(boardFileId);
 
                 // C:/Temp/prj3/boardFile/2324/tiger.jpg 지우고
-                File targetFile
-                        = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + file);
+                File targetFile = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + file);
                 if (targetFile.exists()) {
                     targetFile.delete();
                 }

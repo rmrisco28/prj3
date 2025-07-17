@@ -65,4 +65,10 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     List<Board> findByAuthor(Member db);
 
+    @Query("""
+            SELECT b.id
+            FROM Board b 
+            WHERE b.author = :author
+            """)
+    List<Integer> listBoardIdByAuthor(Member author);
 }

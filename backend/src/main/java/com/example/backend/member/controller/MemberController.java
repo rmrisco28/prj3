@@ -99,7 +99,7 @@ public class MemberController {
 
 
         try {
-            memberService.delete(memberForm);
+            memberService.delete(memberForm, authentication);
         } catch (Exception e) {
             e.printStackTrace();
             String message = e.getMessage();
