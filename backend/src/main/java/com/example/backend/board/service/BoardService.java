@@ -248,7 +248,9 @@ public class BoardService {
 
             // 파일 지우기
             deleteFiles(db, boardDto.getDeleteFiles());
+
             // 파일 추가
+            // 는아까 만들어놓은게 잘 작동
             saveFiles(db, boardDto.getFiles());
 
 
@@ -269,10 +271,13 @@ public class BoardService {
                 boardFileRepository.deleteById(boardFileId);
 
                 // C:/Temp/prj3/boardFile/2324/tiger.jpg 지우고
-                File targetFile = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + file);
-                if (targetFile.exists()) {
-                    targetFile.delete();
-                }
+//                File targetFile = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + file);
+//                if (targetFile.exists()) {
+//                    targetFile.delete();
+//                }
+
+                String objectKey = "prj3/board/" + db.getId() + "/" + file;
+                deleteFile(objectKey);
 
             }
         }

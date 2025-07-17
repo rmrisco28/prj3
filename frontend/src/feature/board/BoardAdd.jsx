@@ -68,6 +68,9 @@ export function BoardAdd() {
   if (content.trim() === "") {
     validate = false;
   }
+  if (!user) {
+    return <Spinner />;
+  }
 
   return (
     // 가운데 정렬
