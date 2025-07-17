@@ -199,15 +199,24 @@ public class BoardService {
         if (db.getAuthor().getEmail().equals(authentication.getName())) {
             // 좋아요
             boardLikeRepository.deleteByBoard(db);
+/*
             // 디스크의 파일
             /// 1.파일 목록 얻고
-            List<String> fileNames = boardFileRepository.listFileNameByBoard(db);
             /// 2.파일 지우기
+            List<String> fileNames = boardFileRepository.listFileNameByBoard(db);
             for (String fileName : fileNames) {
                 File f = new File("C:/Temp/prj3/boardFile/" + db.getId() + "/" + fileName);
                 if (f.exists()) {
                     f.delete();
                 }
+            }
+*/
+            // 1. 파일 목록 얻고
+            List<String> fileNames = boardFileRepository.listFileNameByBoard(db);
+            // 2. s3의 파일  지우기
+            for (String fileName : fileNames) {
+                String objectKey = "prj3/board/" + db.getId() + "/" + fileName;
+                deleteFile(objectKey);
             }
 
 
