@@ -115,37 +115,25 @@ public class BoardService {
                     id.setName(file.getOriginalFilename());
                     boardFile.setBoard(board);
                     boardFile.setId(id);
+
+
                     //repository 채우기
                     boardFileRepository.save(boardFile);
+
+
                     // 실제 파일 disk에 저장
-                    // todo: aws s3에 저장을 변경 할 예정.(내일)
                     // 1. C:/Temp/prj3/boardFile에 게시물 번호 폴더 만들고
                     /// C:/Temp/prj3/boardFile/2002
                     File folder = new File("C:/Temp/prj3/boardFile/" + board.getId());
-                    if (!folder.exists()) {
-                        folder.mkdirs();
-                    }
+//                    if (!folder.exists()) {
+//                        folder.mkdirs();
+//                    }
+                    // todo: aws s3에 저장을 변경 할 예정.(내일)
+                    String objectKey = "prj3/board/" + board.getId() + "/" + file.getOriginalFilename();
+                    uploadFile(file, objectKey);
                     // 2. 그 폴더에 파일 저장
                     /// C:/Temp/prj3/boardFile/2002/tiger.jpg
-                    try {
 
-                        BufferedInputStream bi = new BufferedInputStream(file.getInputStream());
-                        BufferedOutputStream bo = new BufferedOutputStream(new FileOutputStream(new File(folder, file.getOriginalFilename())));
-
-                        try (bi; bo) {
-
-                            byte[] b = new byte[1024];
-                            int len;
-                            while ((len = bi.read(b)) != -1) {
-                                bo.write(b, 0, len);
-                            }
-                            bo.flush();
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
                 }
             }
 
@@ -186,7 +174,7 @@ public class BoardService {
         for (BoardFile boardFile : fileList) {
             BoardFileDto fileDto = new BoardFileDto();
             fileDto.setName(boardFile.getId().getName());
-            fileDto.setPath("http://localhost:8081/boardFile/" + id + "/" + boardFile.getId().getName());
+            fileDto.setPath(imagePrefix + "prj3/board/" + id + "/" + boardFile.getId().getName());
             files.add(fileDto);
         }
 
