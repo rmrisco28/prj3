@@ -13,7 +13,7 @@ import {
   Row,
   Spinner,
 } from "react-bootstrap";
-import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
+import { AuthenticationContext } from "../../common/AuthenticationContextProvider.jsx";
 
 export function BoardAdd() {
   const [title, setTitle] = useState("");

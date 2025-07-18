@@ -11,7 +11,7 @@ import { useContext, useState } from "react";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
+import { AuthenticationContext } from "../../common/AuthenticationContextProvider.jsx";
 
 export function MemberLogin() {
   const [email, setEmail] = useState("");

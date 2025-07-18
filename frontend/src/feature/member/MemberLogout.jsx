@@ -2,7 +2,7 @@ import { Spinner } from "react-bootstrap";
 import { useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
+import { AuthenticationContext } from "../../common/AuthenticationContextProvider.jsx";
 
 export function MemberLogout() {
   const { logout } = useContext(AuthenticationContext);

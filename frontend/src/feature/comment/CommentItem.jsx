@@ -12,7 +12,7 @@ import {
   Modal,
   Spinner,
 } from "react-bootstrap";
-import { AuthenticationContext } from "../../Common/AuthenticationContextProvider.jsx";
+import { AuthenticationContext } from "../../common/AuthenticationContextProvider.jsx";
 import { VscTrash } from "react-icons/vsc";
 import { TiPencil, TiUser } from "react-icons/ti";
 import { LuClock3 } from "react-icons/lu";

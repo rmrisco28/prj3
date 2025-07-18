@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import { MainLayout } from "./Common/MainLayout.jsx";
+import { MainLayout } from "./common/MainLayout.jsx";
 import { BoardList } from "./feature/board/BoardList.jsx";
 import { BoardAdd } from "./feature/board/BoardAdd.jsx";
 import { BoardDetail } from "./feature/board/BoardDetail.jsx";
@@ -10,7 +10,7 @@ import { MemberDetail } from "./feature/member/MemberDetail.jsx";
 import { MemberEdit } from "./feature/member/MemberEdit.jsx";
 import { MemberLogin } from "./feature/member/MemberLogin.jsx";
 import { MemberLogout } from "./feature/member/MemberLogout.jsx";
-import { AuthenticationContextProvider } from "./Common/AuthenticationContextProvider.jsx";
+import { AuthenticationContextProvider } from "./common/AuthenticationContextProvider.jsx";
 
 function App() {
   return (
