@@ -1,6 +1,6 @@
 name: 앱 빌드 후 ec2에 복사
 
-on: 
+on:
   push:
     tags:
       - 'version*'
@@ -20,9 +20,9 @@ jobs:
           npm ci
           npm run build
 
-      - name: copy fronted dist to backend static folder
+      - name: copy frontend dist to backend static folder
         run: |
-          mkdir - p backend/src/main/resources/static
+          mkdir -p backend/src/main/resources/static
           cp -r frontend/dist/* backend/src/main/resources/static/
 
       # create secret files
@@ -37,7 +37,9 @@ jobs:
       # BACKEND BUILD
       - name: build spring boot app
         working-directory: ./backend
-        run: ./gradlew bootJar
+        run: |
+          chmod +x gradlew
+          ./gradlew bootJar
 
       # deploy to ec2
       - name: save ssh key file
@@ -47,7 +49,8 @@ jobs:
 
       - name: upload jar to ec2
         run: |
-          scp -i key.pem -o StrictHostKeyChecking=no backend/build/libs/*.jar ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/home${{secrets.EC2_USER}}/app/prj3.jar
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}} "mkdir -p /home/${{secrets.EC2_USER}}/app"
+          scp -i key.pem -o StrictHostKeyChecking=no backend/build/libs/*.jar ${{secrets.EC2_USER}}@${{secrets.EC2_HOST}}:/home/${{secrets.EC2_USER}}/app/prj3.jar
 
       - name: connect ec2 and run jar with docker
         run: |
@@ -55,9 +58,13 @@ jobs:
             docker stop prj3 || true
             docker rm prj3 || true
 
-            docker run -d -p 8080:8080 --restart always --name prj3 -v /home/${{secrets.EC2_USER}}/app:app openjdk:21 java -jar /app ???????????
-            
+            docker run -d -p 8080:8080 --restart always --name prj3 -v /home/${{secrets.EC2_USER}}/app:/app openjdk:21 java -jar /app/prj3.jar
+
             docker image prune -f
           EOF
 
+
+
+
             
+      
